@@ -21,12 +21,12 @@ public interface TaskData {
 				storage.setList("tags", TagDataType.STRING, value.tags().stream().toList());
 				switch (value) {
 					case ItemTask itemTask -> {
-						storage.setNamespacedKey("item", itemTask.itemType().key());
+						storage.setResourceKey("item", itemTask.itemType().key());
 						storage.setInt("count", itemTask.getRequiredAmount());
 					}
 					case AdvancementTask advancementTask -> {
 						if (advancementTask.advancement() != null) {
-							storage.setNamespacedKey("advancement", advancementTask.advancement().key());
+							storage.setResourceKey("advancement", advancementTask.advancement().key());
 						}
 					}
 					case StatisticTask statisticTask -> {
@@ -41,7 +41,7 @@ public interface TaskData {
 
 				if (storage.contains("item")) {
 					return new ItemTask(ItemType.of(
-							storage.getNamespacedKey("item")),
+							storage.getResourceKey("item")),
 							storage.getInt("count", 1),
 							tags);
 				} else if (storage.contains("advancement")) {
@@ -50,7 +50,7 @@ public interface TaskData {
 						throw new IllegalStateException("Data storage does not have server context when it is required for deserializing advancements.");
 					}
 					return new AdvancementTask(AdvancementHandle.of(server,
-							storage.getNamespacedKey("advancement")),
+							storage.getResourceKey("advancement")),
 							tags);
 				} else if (storage.contains("statistic")) {
 					return new StatisticTask(

@@ -16,30 +16,30 @@ public record StatisticHandle(@NotNull VanillaStatistic type, @Nullable EntityTy
 
 	public static final DataStorageSerializer<StatisticHandle> SERIALIZER = DataStorageSerializer.of(
 			(storage, value) -> {
-				storage.setNamespacedKey("stat_type", value.type.key());
+				storage.setResourceKey("stat_type", value.type.key());
 
 				ItemType item = value.itemType();
 				if (item != null)
 				{
-					storage.setNamespacedKey("item", item.key());
+					storage.setResourceKey("item", item.key());
 				}
 				EntityType entity = value.entityType();
 				if (entity != null)
 				{
-					storage.setNamespacedKey("entity", entity.key());
+					storage.setResourceKey("entity", entity.key());
 				}
 			}, storage -> {
-				VanillaStatistic type = VanillaStatistics.fromKey(storage.getNamespacedKey("stat_type"));
+				VanillaStatistic type = VanillaStatistics.fromKey(storage.getResourceKey("stat_type"));
 
 				ItemType item = null;
 				if (storage.contains("item"))
 				{
-					item = ItemType.of(storage.getNamespacedKey("item"));
+					item = ItemType.of(storage.getResourceKey("item"));
 				}
 				EntityType entity = null;
 				if (storage.contains("entity"))
 				{
-					entity = EntityType.of(storage.getNamespacedKey("entity"));
+					entity = EntityType.of(storage.getResourceKey("entity"));
 				}
 
 				return new StatisticHandle(type, entity, item);

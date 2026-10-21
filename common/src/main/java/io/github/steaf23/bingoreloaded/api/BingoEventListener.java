@@ -36,12 +36,12 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 
 	@Nullable
 	private BingoSession getSession(@NotNull WorldHandle world) {
-		return gameManager.getSessionFromWorld(world);
+		return gameManager.getSessionFromWorld(world).orElse(null);
 	}
 
 	@Nullable
 	private BingoSession getSessionFromKey(@NotNull Key world) {
-		return gameManager.getSessionFromWorld(world);
+		return gameManager.getSessionFromWorld(world).orElse(null);
 	}
 
 	@Override

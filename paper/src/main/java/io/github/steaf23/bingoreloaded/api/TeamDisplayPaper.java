@@ -35,7 +35,7 @@ public class TeamDisplayPaper implements TeamDisplay
         reset();
 
         Set<BingoTeam> activeTeams = manager.getActiveTeams().getTeams();
-        for (PlayerHandle player : session.getPlayersInWorld()) { // loop through all actual players.
+        for (PlayerHandle player : session.allPlayers()) { // loop through all actual players.
             addTeamsForPlayer(player, activeTeams);
         }
     }
@@ -50,7 +50,7 @@ public class TeamDisplayPaper implements TeamDisplay
 
     @Override
     public void reset() {
-        for (PlayerHandle player : session.getPlayersInWorld()) {
+        for (PlayerHandle player : session.allPlayers()) {
             clearTeamsForPlayer(player);
         }
         createdTeams.clear();

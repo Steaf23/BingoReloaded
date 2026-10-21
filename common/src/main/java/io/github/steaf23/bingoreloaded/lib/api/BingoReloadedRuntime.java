@@ -38,7 +38,7 @@ public interface BingoReloadedRuntime {
 	void onLanguageUpdated();
 	void onConfigReloaded(BingoConfigurationData config);
 
-	void registerCommands(BingoConfigurationData config);
+	void registerCommands();
 
 	@Nullable WorldHandle createBingoOverworld(Key worldKey, Key generationOptions);
 

@@ -16,14 +16,14 @@ public record BingoCommandSource(GameContext context, ActionUser user) {
 
 	public Optional<BingoSession> getSession() {
 		if (user instanceof PlayerHandle player) {
-			return Optional.ofNullable(context.gameManager().getSessionFromWorld(player.world()));
+			return context.gameManager().getSessionFromWorld(player.world());
 		}
 
 		return Optional.empty();
 	}
 
 	public Optional<BingoSession> getSessionByName(String name) {
-		return Optional.ofNullable(context.gameManager().getSession(name));
+		return context.gameManager().getSession(name);
 	}
 
 }

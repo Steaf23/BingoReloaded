@@ -16,376 +16,282 @@ import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
-{
-    private final BingoReloaded extension;
-    private final BingoPlaceholderFormatter formatter;
-    private final PlatformServer server;
+import java.util.Optional;
 
-    public BingoReloadedPlaceholderExpansion(PlatformServer server, BingoReloaded extension) {
-        this.server = server;
-        this.extension = extension;
-        this.formatter = new BingoPlaceholderFormatter();
-    }
+public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion {
 
-    @Override
-    public @NotNull String getIdentifier() {
-        return "bingoreloaded";
-    }
+	private final BingoReloaded bingo;
+	private final BingoPlaceholderFormatter formatter;
+	private final PlatformServer server;
 
-    @Override
-    public @NotNull String getAuthor() {
-        return String.join(", ", BingoReloaded.getMetaInfo().authors());
-    }
+	public BingoReloadedPlaceholderExpansion(PlatformServer server, BingoReloaded bingo) {
+		this.server = server;
+		this.bingo = bingo;
+		this.formatter = new BingoPlaceholderFormatter();
+	}
 
-    @Override
-    public @NotNull String getVersion() {
-        return BingoReloaded.getMetaInfo().version();
-    }
+	@Override
+	public @NotNull String getIdentifier() {
+		return "bingoreloaded";
+	}
 
-    @Override
-    public boolean persist() {
-        return true;
-    }
+	@Override
+	public @NotNull String getAuthor() {
+		return String.join(", ", BingoReloaded.getMetaInfo().authors());
+	}
 
-    @Override
-    public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
-        BingoReloadedPlaceholder placeholder = BingoReloadedPlaceholder.fromString(params);
-        if (placeholder == null) {
-            ConsoleMessenger.error("unexpected placeholder '" + params + "' not found in bingo reloaded.");
-            return null;
-        }
+	@Override
+	public @NotNull String getVersion() {
+		return BingoReloaded.getMetaInfo().version();
+	}
 
-        Component defaultComponent = Component.text("-");
+	@Override
+	public boolean persist() {
+		return true;
+	}
 
-        Component placeholderComponent = switch (placeholder) {
-            case CREATED_SESSION -> {
-                String sessionName = params.replace(BingoReloadedPlaceholder.CREATED_SESSION.getName(), "");
+	@Override
+	public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
+		BingoReloadedPlaceholder placeholder = BingoReloadedPlaceholder.fromString(params);
+		if (placeholder == null) {
+			ConsoleMessenger.error("unexpected placeholder '" + params + "' not found in bingo reloaded.");
+			return null;
+		}
 
-                BingoSession session = extension.getGameManager().getSession(sessionName);
-                if (session == null) {
-                    yield Component.empty();
-                }
-                yield Component.text(sessionName);
-            }
-            case COUNT_SESSION_PLAYERS -> {
-                String sessionName = params.replace(BingoReloadedPlaceholder.COUNT_SESSION_PLAYERS.getName(), "");
+		TextComponent defaultComponent = Component.text("-");
 
-                BingoSession session = extension.getGameManager().getSession(sessionName);
-                if (session == null) {
-                    yield Component.empty();
-                }
-                yield Component.text(session.teamManager.getParticipants().size());
-            }
-            case TEAM_FULL -> getPlayerTeamPlaceholder(player, true, true);
-            case TEAM_COLOR -> getPlayerTeamPlaceholder(player, false, true);
-            case TEAM_NAME -> getPlayerTeamPlaceholder(player, true, false);
-            case CURRENT_TASKS_TEAM -> {
-                BingoTeam team = getPlayerTeam(player);
-                if (team == null) {
-                    yield defaultComponent;
-                }
-                yield Component.text(team.getCompleteCount());
-            }
-            case CURRENT_TASKS_PLAYER -> {
-                BingoParticipant participant = getParticipant(player);
-                if (participant == null) {
-                    yield defaultComponent;
-                }
-                yield Component.text(participant.getAmountOfTaskCompleted());
-            }
-            case CURRENT_TIME -> {
-                BingoSession session = getSession(player);
-                if (session == null) {
-                    yield defaultComponent;
-                }
-                if (session.phase() instanceof BingoGame game) {
-                    yield GameTimer.getTimeAsComponent(game.getGameTime());
-                }
-                yield defaultComponent;
-            }
-            case GAME_STATUS -> {
-                //TODO: implement
-                ConsoleMessenger.error("placeholder bingoreloaded_game_status is not implemented yet!");
-                yield defaultComponent;
-            }
-            case SETTING_GAMEMODE -> {
-                BingoSettings settings = getSettings(player);
-                if (settings == null) {
-                    yield defaultComponent;
-                }
-                else {
-                    yield settings.mode().asComponent();
-                }
-            }
-            case SETTING_CARDSIZE -> {
-                BingoSettings settings = getSettings(player);
-                if (settings == null) {
-                    yield defaultComponent;
-                }
-                else {
-                    yield settings.size().asComponent();
-                }
-            }
-            case SETTING_CARDNAME -> {
-                BingoSettings settings = getSettings(player);
-                if (settings == null) {
-                    yield defaultComponent;
-                }
-                else {
-                    yield Component.text(settings.cardName());
-                }
-            }
-            case SETTING_KIT -> {
-                BingoSettings settings = getSettings(player);
-                if (settings == null) {
-                    yield defaultComponent;
-                }
-                else {
-                    yield settings.kit().getDisplayName();
-                }
-            }
-            case SETTING_DURATION -> {
-                BingoSettings settings = getSettings(player);
-                if (settings == null) {
-                    yield defaultComponent;
-                }
-                else {
-                    yield settings.useCountdown() ? Component.text(settings.countdownDuration()) : defaultComponent;
-                }
-            }
-            case SETTING_EFFECTS -> {
-                //TODO: implement
-                ConsoleMessenger.error("placeholder bingoreloaded_setting_effect is not implemented yet!");
-                yield defaultComponent;
-            }
-            case SETTING_HOTSWAP_WINSCORE -> {
-                BingoSettings settings = getSettings(player);
-                if (settings == null) {
-                    yield defaultComponent;
-                }
-                else {
-                    yield settings.useScoreAsWinCondition() ? Component.text(settings.hotswapGoal()) : defaultComponent;
-                }
-            }
-            case SETTING_HOTSWAP_EXPIRE -> {
-                BingoSettings settings = getSettings(player);
-                if (settings == null) {
-                    yield defaultComponent;
-                }
-                else {
-                    yield Component.text(settings.expireHotswapTasks());
-                }
-            }
-            case SETTING_COMPLETE_WINSCORE -> {
-                BingoSettings settings = getSettings(player);
-                if (settings == null) {
-                    yield defaultComponent;
-                }
-                else {
-                    yield settings.useScoreAsWinCondition() ? Component.text(settings.completeGoal()) : defaultComponent;
-                }
-            }
-            case SETTING_SEED -> {
-                BingoSettings settings = getSettings(player);
-                if (settings == null) {
-                    yield defaultComponent;
-                }
-                else {
-                    yield Component.text(settings.seed());
-                }
-            }
-            case SETTING_TEAMSIZE -> {
-                BingoSettings settings = getSettings(player);
-                if (settings == null) {
-                    yield defaultComponent;
-                }
-                else {
-                    yield Component.text(settings.maxTeamSize());
-                }
-            }
-            case SETTING_SEPARATE_CARDS -> {
-                BingoSettings settings = getSettings(player);
-                if (settings == null) {
-                    yield defaultComponent;
-                }
-                else {
-                    yield Component.text(settings.differentCardPerTeam());
-                }
-            }
-            case SETTING_BLITZ_START_DURATION -> {
-                BingoSettings settings = getSettings(player);
-                if (settings == null) {
-                    yield defaultComponent;
-                }
-                else {
-                    yield settings.useCountdown() ? Component.text(settings.blitzStartDuration() * 10) : defaultComponent;
-                }
-            }
-            case SETTING_BLITZ_BONUS_DURATION -> {
-                BingoSettings settings = getSettings(player);
-                if (settings == null) {
-                    yield defaultComponent;
-                }
-                else {
-                    yield settings.useCountdown() ? Component.text(settings.blitzBonusDuration() * 10) : defaultComponent;
-                }
-            }
-            case SESSION_NAME -> getPlayerSessionPlaceholder(player);
-            case GAMES_WINS -> getPlayerStatPlaceholder(player, BingoStatType.WINS);
-            case GAMES_LOSSES -> getPlayerStatPlaceholder(player, BingoStatType.LOSSES);
-            case GAMES_PLAYED -> getPlayerStatPlaceholder(player, BingoStatType.PLAYED);
-            case TASKS_COMPLETED -> getPlayerStatPlaceholder(player, BingoStatType.TASKS);
-            case TASK_COMPLETED_RECORD -> getPlayerStatPlaceholder(player, BingoStatType.RECORD_TASKS);
-            case ITEM_USES_WAND -> getPlayerStatPlaceholder(player, BingoStatType.WAND_USES);
-        };
+		Component placeholderComponent = switch (placeholder) {
+			case CREATED_SESSION -> {
+				String sessionName = params.replace(BingoReloadedPlaceholder.CREATED_SESSION.getName(), "");
 
-        if (placeholder == BingoReloadedPlaceholder.TEAM_FULL) {
-            return LegacyComponentSerializer.legacySection().serialize(placeholderComponent) + "§r";
-        }
-        return LegacyComponentSerializer.legacySection().serialize(BingoMessage.createPhrase(getPlaceholderFormat(placeholder), placeholderComponent)) + "§r";
-    }
+				yield bingo.getGameManager().getSession(sessionName)
+						.map(_ -> Component.text(sessionName))
+						.orElse(Component.empty());
+			}
+			case COUNT_SESSION_PLAYERS -> {
+				String sessionName = params.replace(BingoReloadedPlaceholder.COUNT_SESSION_PLAYERS.getName(), "");
 
-    private Component getPlayerTeamPlaceholder(OfflinePlayer player, boolean getName, boolean getColor) {
-        GameManager gameManager = extension.getGameManager();
-        Component noTeamPlaceholder = Component.empty();
+				yield bingo.getGameManager().getSession(sessionName)
+						.map(session -> Component.text(session.teamManager.getParticipants().size()))
+						.orElse(Component.empty());
+			}
+			case TEAM_FULL -> getPlayerTeamPlaceholder(player, true, true);
+			case TEAM_COLOR -> getPlayerTeamPlaceholder(player, false, true);
+			case TEAM_NAME -> getPlayerTeamPlaceholder(player, true, false);
+			case CURRENT_TASKS_TEAM -> {
+				yield getPlayerTeam(player).map(team -> Component.text(team.getCompleteCount()))
+						.orElse(defaultComponent);
+			}
+			case CURRENT_TASKS_PLAYER -> {
+				yield getParticipant(player)
+						.map(participant -> Component.text(participant.getAmountOfTaskCompleted()))
+						.orElse(defaultComponent);
+			}
+			case CURRENT_TIME -> {
+				yield getSession(player).map(session -> {
+					if (session.phase() instanceof BingoGame game) {
+						return GameTimer.getTimeAsComponent(game.getGameTime());
+					} else {
+						return defaultComponent;
+					}
+				}).orElse(defaultComponent);
+			}
+			case GAME_STATUS -> {
+				//TODO: implement
+				ConsoleMessenger.error("placeholder bingoreloaded_game_status is not implemented yet!");
+				yield defaultComponent;
+			}
+			case SETTING_GAMEMODE -> {
+				yield getSettings(player).map(settings -> settings.mode().asComponent())
+						.orElse(defaultComponent);
+			}
+			case SETTING_CARDSIZE -> {
+				yield getSettings(player).map(settings -> settings.size().asComponent())
+						.orElse(defaultComponent);
+			}
+			case SETTING_CARDNAME -> {
+				yield getSettings(player).map(settings -> Component.text(settings.cardName()))
+						.orElse(defaultComponent);
+			}
+			case SETTING_KIT -> {
+				yield getSettings(player).map(settings -> settings.kit().getDisplayName())
+						.orElse(defaultComponent);
+			}
+			case SETTING_DURATION -> {
+				yield getSettings(player).filter(BingoSettings::useCountdown).map(settings -> Component.text(settings.countdownDuration()))
+						.orElse(defaultComponent);
+			}
+			case SETTING_EFFECTS -> {
+				//TODO: implement
+				ConsoleMessenger.error("placeholder bingoreloaded_setting_effect is not implemented yet!");
+				yield defaultComponent;
+			}
+			case SETTING_HOTSWAP_WINSCORE -> {
+				yield getSettings(player).filter(BingoSettings::useScoreAsWinCondition).map(settings -> Component.text(settings.hotswapGoal()))
+						.orElse(defaultComponent);
+			}
+			case SETTING_HOTSWAP_EXPIRE -> {
+				yield getSettings(player).map(settings -> Component.text(settings.expireHotswapTasks()))
+						.orElse(defaultComponent);
+			}
+			case SETTING_COMPLETE_WINSCORE -> {
+				yield getSettings(player).filter(BingoSettings::useScoreAsWinCondition).map(settings -> Component.text(settings.completeGoal()))
+						.orElse(defaultComponent);
+			}
+			case SETTING_SEED -> {
+				yield getSettings(player).map(settings -> Component.text(settings.seed()))
+						.orElse(defaultComponent);
+			}
+			case SETTING_TEAMSIZE -> {
+				yield getSettings(player).map(settings -> Component.text(settings.maxTeamSize()))
+						.orElse(defaultComponent);
+			}
+			case SETTING_SEPARATE_CARDS -> {
+				yield getSettings(player).map(settings -> Component.text(settings.differentCardPerTeam()))
+						.orElse(defaultComponent);
+			}
+			case SETTING_BLITZ_START_DURATION -> {
+				yield getSettings(player).filter(BingoSettings::useCountdown).map(settings -> Component.text(settings.blitzStartDuration() * 10))
+						.orElse(defaultComponent);
+			}
+			case SETTING_BLITZ_BONUS_DURATION -> {
+				yield getSettings(player).filter(BingoSettings::useCountdown).map(settings -> Component.text(settings.blitzBonusDuration() * 10))
+						.orElse(defaultComponent);
+			}
+			case SESSION_NAME -> getPlayerSessionPlaceholder(player);
+			case GAMES_WINS -> getPlayerStatPlaceholder(player, BingoStatType.WINS);
+			case GAMES_LOSSES -> getPlayerStatPlaceholder(player, BingoStatType.LOSSES);
+			case GAMES_PLAYED -> getPlayerStatPlaceholder(player, BingoStatType.PLAYED);
+			case TASKS_COMPLETED -> getPlayerStatPlaceholder(player, BingoStatType.TASKS);
+			case TASK_COMPLETED_RECORD -> getPlayerStatPlaceholder(player, BingoStatType.RECORD_TASKS);
+			case ITEM_USES_WAND -> getPlayerStatPlaceholder(player, BingoStatType.WAND_USES);
+		};
 
-        // If a player is online, we can the team from the participant object
-        PlayerHandle onlinePlayer = server.getPlayerFromUniqueId(player.getUniqueId());
-        if (onlinePlayer != null) {
-            BingoSession session = gameManager.getSessionFromWorld(onlinePlayer.world());
-            if (session == null) {
-                return noTeamPlaceholder;
-            }
-            BingoParticipant participant = session.teamManager.getPlayerAsParticipant(onlinePlayer);
-            if (participant == null || participant.getTeam() == null) {
-                return noTeamPlaceholder;
-            }
-            return placeholderFromTeam(participant.getTeam(), getName, getColor);
-        }
+		if (placeholder == BingoReloadedPlaceholder.TEAM_FULL) {
+			return LegacyComponentSerializer.legacySection().serialize(placeholderComponent) + "§r";
+		}
+		return LegacyComponentSerializer.legacySection().serialize(BingoMessage.createPhrase(getPlaceholderFormat(placeholder), placeholderComponent)) + "§r";
+	}
 
-        // When a player is either not online or in the auto team, we have to get the team manually.
-        for (String sessionName : gameManager.getSessionNames()) {
-            BingoSession session = gameManager.getSession(sessionName);
-            if (session == null) {
-                return noTeamPlaceholder;
-            }
+	private Component getPlayerTeamPlaceholder(OfflinePlayer player, boolean getName, boolean getColor) {
+		GameManager gameManager = bingo.getGameManager();
+		Component noTeamPlaceholder = Component.empty();
 
-            for (BingoParticipant participant : session.teamManager.getParticipants()) {
-                if (participant.getId().equals(player.getUniqueId()) && participant.getTeam() != null) {
-                    return placeholderFromTeam(participant.getTeam(), getName, getColor);
-                }
-            }
-        }
+		// If a player is online, we can the team from the participant object
+		PlayerHandle onlinePlayer = server.getPlayerFromUniqueId(player.getUniqueId());
+		if (onlinePlayer != null) {
+			return gameManager.getSessionFromWorld(onlinePlayer.world())
+					.map(session -> session.teamManager.getPlayerAsParticipant(onlinePlayer))
+					.map(BingoParticipant::getTeam)
+					.map(team -> placeholderFromTeam(team, getName, getColor))
+					.orElse(noTeamPlaceholder);
+		}
 
-        return noTeamPlaceholder;
-    }
+		// When a player is either not online or in the auto team, we have to get the team manually.
+		for (String sessionName : gameManager.getSessionNames()) {
+			BingoSession session = gameManager.getSession(sessionName).orElseThrow();
 
-    private Component getPlayerStatPlaceholder(OfflinePlayer player, BingoStatType statType) {
-        BingoStatData statData = new BingoStatData(server);
-        return Component.text(statData.getPlayerStat(player.getUniqueId(), statType));
-    }
+			for (BingoParticipant participant : session.teamManager.getParticipants()) {
+				if (participant.getId().equals(player.getUniqueId()) && participant.getTeam() != null) {
+					return placeholderFromTeam(participant.getTeam(), getName, getColor);
+				}
+			}
+		}
 
-    private Component placeholderFromTeam(@NotNull BingoTeam team, boolean getName, boolean getColor) {
-        if (getColor && getName) {
-            //FIXME: weird manual argument shifting is required because of how the color argument works, as we cannot easily get a standalone color...
-            return BingoMessage.createPhrase(getPlaceholderFormat(BingoReloadedPlaceholder.TEAM_FULL).replace("{0}", "<" + team.getColor().toString() + ">").replace("{1}", "<0>"),
-                    placeholderFromTeam(team, true, false));
-        }
+		return noTeamPlaceholder;
+	}
 
-        if (getColor) {
-            return Component.empty();
+	private Component getPlayerStatPlaceholder(OfflinePlayer player, BingoStatType statType) {
+		BingoStatData statData = new BingoStatData(server);
+		return Component.text(statData.getPlayerStat(player.getUniqueId(), statType));
+	}
+
+	private Component placeholderFromTeam(@NotNull BingoTeam team, boolean getName, boolean getColor) {
+		if (getColor && getName) {
+			//FIXME: weird manual argument shifting is required because of how the color argument works, as we cannot easily get a standalone color...
+			return BingoMessage.createPhrase(getPlaceholderFormat(BingoReloadedPlaceholder.TEAM_FULL).replace("{0}", "<" + team.getColor().toString() + ">").replace("{1}", "<0>"),
+					placeholderFromTeam(team, true, false));
+		}
+
+		if (getColor) {
+			return Component.empty();
 //            return BingoMessage.createPhrase(getPlaceholderFormat(BingoReloadedPlaceholder.TEAM_COLOR), Component.text("<" + team.getColor().toString() + ">"));
-        }
-        if (getName) {
-            return BingoMessage.createPhrase(getPlaceholderFormat(BingoReloadedPlaceholder.TEAM_NAME), team.getName());
-        }
-        return Component.empty();
-    }
+		}
+		if (getName) {
+			return BingoMessage.createPhrase(getPlaceholderFormat(BingoReloadedPlaceholder.TEAM_NAME), team.getName());
+		}
+		return Component.empty();
+	}
 
-    private Component getPlayerSessionPlaceholder(OfflinePlayer player) {
-        BingoSession session = getSession(player);
-        Component noSessionPlaceholder = Component.empty();
+	private Component getPlayerSessionPlaceholder(OfflinePlayer player) {
+		Component noSessionPlaceholder = Component.empty();
 
-        if (session == null) {
-            return noSessionPlaceholder;
-        }
+		return getSession(player)
+				.map(session -> {
+					return BingoMessage.createPhrase(getPlaceholderFormat(BingoReloadedPlaceholder.SESSION_NAME), Component.text(bingo.getGameManager().getNameOfSession(session)));
+				}).orElse(noSessionPlaceholder);
+	}
 
-        return BingoMessage.createPhrase(getPlaceholderFormat(BingoReloadedPlaceholder.SESSION_NAME), Component.text(extension.getGameManager().getNameOfSession(session)));
-    }
+	private String getPlaceholderFormat(BingoReloadedPlaceholder placeholder) {
+		return formatter.format(placeholder);
+	}
 
-    private String getPlaceholderFormat(BingoReloadedPlaceholder placeholder) {
-        return formatter.format(placeholder);
-    }
+	private Optional<BingoSession> getSession(OfflinePlayer player) {
+		GameManager gameManager = bingo.getGameManager();
 
-    private @Nullable BingoSession getSession(OfflinePlayer player) {
-        GameManager gameManager = extension.getGameManager();
+		// If a player is online, we can the team from the participant object
+		PlayerHandle onlinePlayer = server.getPlayerFromUniqueId(player.getUniqueId());
+		if (onlinePlayer != null) {
+			return gameManager.getSessionFromWorld(onlinePlayer.world());
+		}
 
-        // If a player is online, we can the team from the participant object
-        PlayerHandle onlinePlayer = server.getPlayerFromUniqueId(player.getUniqueId());
-        if (onlinePlayer != null) {
-            return gameManager.getSessionFromWorld(onlinePlayer.world());
-        }
+		// When a player is either not online or in the auto team, we have to get the team manually.
+		for (String sessionName : gameManager.getSessionNames()) {
+			BingoSession session = gameManager.getSession(sessionName).orElseThrow();
 
-        // When a player is either not online or in the auto team, we have to get the team manually.
-        for (String sessionName : gameManager.getSessionNames()) {
-            BingoSession session = gameManager.getSession(sessionName);
+			for (BingoParticipant participant : session.teamManager.getParticipants()) {
+				if (participant.getId().equals(player.getUniqueId()) && participant.getTeam() != null) {
+					return Optional.of(session);
+				}
+			}
+		}
+		return Optional.empty();
+	}
 
-            for (BingoParticipant participant : session.teamManager.getParticipants()) {
-                if (participant.getId().equals(player.getUniqueId()) && participant.getTeam() != null) {
-                    return session;
-                }
-            }
-        }
-        return null;
-    }
+	private Optional<BingoParticipant> getParticipant(OfflinePlayer player) {
+		GameManager gameManager = bingo.getGameManager();
 
-    private @Nullable BingoParticipant getParticipant(OfflinePlayer player) {
-        GameManager gameManager = extension.getGameManager();
+		// If a player is online, we can get the team from the participant object
+		PlayerHandle onlinePlayer = server.getPlayerFromUniqueId(player.getUniqueId());
+		if (onlinePlayer != null) {
+			return gameManager.getSessionFromWorld(onlinePlayer.world())
+					.map(session -> session.teamManager.getPlayerAsParticipant(onlinePlayer));
+		}
 
-        // If a player is online, we can get the team from the participant object
-        PlayerHandle onlinePlayer = server.getPlayerFromUniqueId(player.getUniqueId());
-        if (onlinePlayer != null) {
-            BingoSession session = gameManager.getSessionFromWorld(onlinePlayer.world());
-            if (session == null) {
-                return null;
-            }
-            return session.teamManager.getPlayerAsParticipant(onlinePlayer);
-        }
+		// When a player is either not online or in the auto team, we have to get the team manually.
+		for (String sessionName : gameManager.getSessionNames()) {
+			BingoSession session = gameManager.getSession(sessionName).orElseThrow();
 
-        // When a player is either not online or in the auto team, we have to get the team manually.
-        for (String sessionName : gameManager.getSessionNames()) {
-            BingoSession session = gameManager.getSession(sessionName);
+			for (BingoParticipant participant : session.teamManager.getParticipants()) {
+				if (participant.getId().equals(player.getUniqueId()) && participant.getTeam() != null) {
+					return Optional.of(participant);
+				}
+			}
+		}
+		return Optional.empty();
+	}
 
-            for (BingoParticipant participant : session.teamManager.getParticipants()) {
-                if (participant.getId().equals(player.getUniqueId()) && participant.getTeam() != null) {
-                    return participant;
-                }
-            }
-        }
-        return null;
-    }
+	private Optional<BingoTeam> getPlayerTeam(OfflinePlayer player) {
+		return getParticipant(player).map(BingoParticipant::getTeam);
+	}
 
-    private @Nullable BingoTeam getPlayerTeam(OfflinePlayer player) {
-        BingoParticipant participant = getParticipant(player);
-        if (participant == null) {
-            return null;
-        }
-
-        return participant.getTeam();
-    }
-
-    private @Nullable BingoSettings getSettings(OfflinePlayer player) {
-        BingoSession session = getSession(player);
-        if (session == null) {
-            return null;
-        }
-
-        return session.settingsBuilder.view();
-    }
+	private Optional<BingoSettings> getSettings(OfflinePlayer player) {
+		return getSession(player).map(session -> session.settingsBuilder.view());
+	}
 }

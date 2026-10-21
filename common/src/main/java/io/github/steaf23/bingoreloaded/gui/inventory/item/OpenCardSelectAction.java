@@ -10,6 +10,8 @@ import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 
+import java.util.Optional;
+
 public class OpenCardSelectAction extends MenuAction {
 
 	private final BingoReloaded bingo;
@@ -27,8 +29,8 @@ public class OpenCardSelectAction extends MenuAction {
 	@Override
 	public void use(ActionArguments arguments) {
 		// The reason to not use getSessionOfPlayer is that not all players that execute this command have to be active bingo players.
-		BingoSession session = bingo.getGameManager().getSessionFromWorld(arguments.player().world());
-		if (session == null) {
+		Optional<BingoSession> session = bingo.getGameManager().getSessionFromWorld(arguments.player().world());
+		if (session.isEmpty()) {
 			return;
 		}
 
@@ -39,6 +41,6 @@ public class OpenCardSelectAction extends MenuAction {
 		arguments.menu().setOpenOnce(true);
 
 		MenuBoard board = arguments.menu().getMenuBoard();
-		new TeamCardSelectMenu(board, session).open(arguments.player());
+		new TeamCardSelectMenu(board, session.get()).open(arguments.player());
 	}
 }

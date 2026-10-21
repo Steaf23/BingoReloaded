@@ -548,7 +548,7 @@ public class BingoCommand<Source> extends MappedCommand<Source> {
 		GlobalPosition pos = player.position();
 		Optional<BingoSession> session = source.getSession();
 		// In multiple, we cannot create a lobby in a bingo world because there should only be one lobby ever.
-		if (this.config.getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.MULTIPLE && session.isPresent() && session.get().ownsWorld(player.world())) {
+		if (this.config.getOptionValue(BingoOptions.SETUP).maxConcurrentGames() > 1 && session.isPresent() && session.get().usesWorld(player.world())) {
 			BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("<red>Lobby cannot be created in a bingo-world. Please create it in the lobby world as defined by defaultWorldName.</red>"), player);
 			return 0;
 		}

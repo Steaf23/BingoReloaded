@@ -8,7 +8,6 @@ import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
-import io.github.steaf23.bingoreloaded.gameloop.SingularGameManager;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.ExtensionInfo;
@@ -112,7 +111,7 @@ public class BingoReloaded implements Namespaced {
 //		runtime.registerAction(true, new BingoConfigAction(config));
 //		runtime.registerAction(false, new BingoAction(config));
 //		runtime.registerAction(false, new BotCommandAction());
-		runtime.registerCommands(config);
+		runtime.registerCommands();
 
 		ConsoleMessenger.log(Component.text("Enabled " + metaInfo.name()).color(NamedTextColor.GREEN));
 	}
@@ -290,13 +289,11 @@ public class BingoReloaded implements Namespaced {
 			gameManager.onPluginDisable();
 		}
 
-		if (config.getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.SINGULAR) {
-			this.gameManager = new SingularGameManager(server, runtime, config);
-		} else {
+//		if (config.getOptionValue(BingoOptions.SETUP).usesServerWorld()) {
+//			this.gameManager = new IntegratedGameManager(server, runtime, config);
+//		} else {
 			this.gameManager = new GameManager(server, runtime, config);
-		}
-
-		this.gameManager.setup(config.getOptionValue(BingoOptions.DEFAULT_WORLDS));
+//		}
 	}
 
 	@KeyPattern.Namespace

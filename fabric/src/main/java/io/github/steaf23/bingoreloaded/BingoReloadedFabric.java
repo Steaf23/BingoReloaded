@@ -154,11 +154,11 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	}
 
 	@Override
-	public void registerCommands(BingoConfigurationData config) {
+	public void registerCommands() {
 		CommandRegistrationCallback.EVENT.register(((dispatcher, buildContext, selection) -> {
 			MappedCommand.Settings<CommandSourceStack> settings = new MappedCommand.Settings<>(this::mapCommandSource, KeyArgumentType.key());
 			dispatcher.register(new BingoCommand<>(bingo.config(), settings).builder());
-			dispatcher.register(new AutoBingoCommand<>(settings).builder());
+			dispatcher.register(new AutoBingoCommand<>(bingo.config().getOptionValue(BingoOptions.SETUP), settings).builder());
 			dispatcher.register(new BingoConfigCommand<>(bingo.config(), settings).builder());
 
 			// TODO: add team chat command

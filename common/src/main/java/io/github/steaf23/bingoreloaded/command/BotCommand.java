@@ -126,12 +126,12 @@ public class BotCommand<Source> extends MappedCommand<Source> {
 		session.teamManager.addMemberToTeam(virtualPlayer, teamName);
 	}
 
-	public @Nullable BingoSession getSessionFromUser(GameManager manager, ActionUser user) {
+	public Optional<BingoSession> getSessionFromUser(GameManager manager, ActionUser user) {
 		if (user instanceof PlayerHandle player) {
 			return manager.getSessionFromWorld(player.world());
 		}
 
-		return null;
+		return Optional.empty();
 	}
 
 	public void addSessionSubAction(String name, List<String> permissions, BiFunction<CommandContext<Source>, BingoSession, Boolean> action) {

@@ -10,7 +10,7 @@ import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
 import io.github.steaf23.bingoreloaded.data.teleportgrid.TeleportGridData;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
-import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
+import io.github.steaf23.bingoreloaded.data.world.WorldSet;
 import io.github.steaf23.bingoreloaded.gameloop.spawn.PlayerSpawnCoordinator;
 import io.github.steaf23.bingoreloaded.gameloop.spawn.strategy.DispersedSpawnStrategy;
 import io.github.steaf23.bingoreloaded.gameloop.spawn.strategy.GridSpawnStrategy;
@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -105,7 +106,7 @@ public class GameManager {
 			return false;
 		}
 
-		BingoSession session = new BingoSession(this, worldData.createWorldGroupInSession(sessionName), config);
+		BingoSession session = new BingoSession(this, worldData.createWorldSetWithName(sessionName), config);
 		sessions.put(sessionName, session);
 		return true;
 	}
@@ -116,12 +117,12 @@ public class GameManager {
 		}
 
 		endGame(sessionName);
-		WorldGroup group = worldData.getWorldGroupInSession(sessionName);
-		if (group == null) {
+		Optional<WorldSet> set = worldData.getWorldSet(sessionName);
+		if (set.isEmpty()) {
 			ConsoleMessenger.bug("Could not destroy worlds from session properly", this);
 			return false;
 		}
-		worldData.destroyWorldGroup(group);
+		worldData.destroyWorldGroup(set.get());
 		sessions.get(sessionName).destroy();
 		sessions.remove(sessionName);
 		return true;
@@ -153,25 +154,25 @@ public class GameManager {
 		return true;
 	}
 
-	public @Nullable BingoSession getSession(String sessionName) {
+	public Optional<BingoSession> getSession(String sessionName) {
 		if (sessions.containsKey(sessionName)) {
-			return sessions.get(sessionName);
+			return Optional.of(sessions.get(sessionName));
 		}
-		return null;
+		return Optional.empty();
 	}
 
-	public @Nullable BingoSession getSessionFromWorld(@NotNull WorldHandle world) {
+	public Optional<BingoSession> getSessionFromWorld(@NotNull WorldHandle world) {
 		return getSessionFromWorld(world.key());
 	}
 
-	public @Nullable BingoSession getSessionFromWorld(@NotNull Key worldKey) {
+	public Optional<BingoSession> getSessionFromWorld(@NotNull Key worldKey) {
 		for (String session : sessions.keySet()) {
 			BingoSession s = sessions.get(session);
-			if (s.ownsWorld(worldKey)) {
-				return s;
+			if (s.usesWorld(worldKey)) {
+				return Optional.of(s);
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	public String getNameOfSession(@Nullable BingoSession session) {
@@ -202,25 +203,25 @@ public class GameManager {
 	}
 
 	public boolean teleportPlayerToSession(PlayerHandle player, String sessionName) {
-		WorldGroup bingoWorld = worldData.getWorldGroupInSession(sessionName);
-		if (bingoWorld == null) {
+		Optional<WorldSet> bingoWorld = worldData.getWorldSet(sessionName);
+		if (bingoWorld.isEmpty()) {
 			return false;
 		}
 
-		bingoWorld.teleportPlayer(player);
+		bingoWorld.get().teleportPlayer(player);
 		return true;
 	}
 
-	public @Nullable BingoSession getSessionOfPlayer(PlayerHandle player) {
+	public Optional<BingoSession> getSessionOfPlayer(PlayerHandle player) {
 		for (String sessionName : sessions.keySet()) {
 			BingoSession session = sessions.get(sessionName);
 			BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
 			if (participant != null) {
-				return session;
+				return Optional.of(session);
 			}
 		}
 
-		return null;
+		return Optional.empty();
 	}
 
 	public Collection<String> getSessionNames() {
@@ -271,14 +272,14 @@ public class GameManager {
 		DebugLogger.addLog("Source world: " + sourceWorld.key());
 		DebugLogger.addLog("Target world: " + targetWorld.key());
 
-		BingoSession sourceSession = getSessionFromWorld(sourceWorld);
-		BingoSession targetSession = getSessionFromWorld(targetWorld);
+		Optional<BingoSession> sourceSession = getSessionFromWorld(sourceWorld);
+		Optional<BingoSession> targetSession = getSessionFromWorld(targetWorld);
 
-		DebugLogger.addLog("Source session: " + (sourceSession != null ? getNameOfSession(sourceSession) : "<NULL>"));
-		DebugLogger.addLog("Target session: " +  (targetSession != null ? getNameOfSession(targetSession) : "<NULL>"));
+		DebugLogger.addLog("Source session: " + (sourceSession.isPresent() ? getNameOfSession(sourceSession.get()) : "<NULL>"));
+		DebugLogger.addLog("Target session: " +  (targetSession.isPresent() ? getNameOfSession(targetSession.get()) : "<NULL>"));
 
 		// We could have gone through a portal, so still both worlds could be in the same session, so we can return.
-		if (sourceSession == targetSession) {
+		if (sourceSession.equals(targetSession)) {
 			DebugLogger.addLog("Teleported using a portal, target session is the source session.");
 			return EventResult.IGNORE;
 		}
@@ -286,8 +287,8 @@ public class GameManager {
 		boolean savePlayerInformation = config.getOptionValue(BingoOptions.SAVE_PLAYER_INFORMATION);
 
 		boolean cancel = false;
-		if (sourceSession != null) {
-			if (targetSession == null) {
+		if (sourceSession.isPresent()) {
+			if (targetSession.isEmpty()) {
 				DebugLogger.addLog("Player leaving the bingo world");
 				player.clearInventory(); // If we are leaving a bingo world, we can always clear the player's inventory
 
@@ -307,11 +308,11 @@ public class GameManager {
 					cancel = true;
 				}
 			}
-			sourceSession.removePlayer(player);
+			sourceSession.get().removePlayer(player);
 		}
 
-		if (targetSession != null) {
-			if (savePlayerInformation && sourceSession == null) {
+		if (targetSession.isPresent()) {
+			if (savePlayerInformation && sourceSession.isEmpty()) {
 				DebugLogger.addLog("Saving player data as they are entering a session world");
                 // Only save player data if it does not pertain to a bingo world
                 SerializablePlayer serializablePlayer = SerializablePlayer.fromPlayer(BingoReloaded.getMetaInfo().version(), player);
@@ -319,8 +320,7 @@ public class GameManager {
 			}
 
 			// If the player was already playing in another session, remove them from that game first
-			BingoSession previousSession = getSessionOfPlayer(player);
-			if (previousSession != null) {
+			getSessionOfPlayer(player).ifPresent(previousSession -> {
 				BingoParticipant participant = previousSession.teamManager.getPlayerAsParticipant(player);
 				if (participant != null) {
 					previousSession.removeParticipant(participant);
@@ -330,30 +330,24 @@ public class GameManager {
 					previousSession.removeParticipant(playerProxy);
 				}
 				DebugLogger.addLog("Player teleported from one session to a different one(must be source session?) !");
-			}
+			});
 
 			// set spawn point of player in session world
-			player.setRespawnPoint(targetSession.getOverworld().spawnPoint(), true);
-			targetSession.addPlayer(player);
+			player.setRespawnPoint(targetSession.get().getOverworld().spawnPoint(), true);
+			targetSession.get().addPlayer(player);
 		}
 
 		return new EventResult<>(cancel, null);
 	}
 
 	public void handlePlayerJoinsServer(final PlayerHandle player) {
-		BingoSession targetSession = getSessionFromWorld(player.world());
-
-		if (targetSession != null) {
-			targetSession.addPlayer(player);
-		}
+		getSessionFromWorld(player.world())
+				.ifPresent(session -> session.addPlayer(player));
 	}
 
 	public void handlePlayerQuitsServer(final PlayerHandle player) {
-		BingoSession sourceSession = getSessionFromWorld(player.world());
-
-		if (sourceSession != null) {
-			sourceSession.removePlayer(player);
-		}
+		getSessionFromWorld(player.world())
+				.ifPresent(session -> session.removePlayer(player));
 
 		runtime.getClientManager().playerLeavesServer(player);
 	}

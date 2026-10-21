@@ -7,8 +7,6 @@ import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
 import io.github.steaf23.bingoreloaded.lib.data.core.node.NodeLikeData;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
-import net.kyori.adventure.key.Key;
-import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -412,22 +410,6 @@ public class TagDataStorage implements DataStorage
     public @NotNull GlobalPosition getGlobalPosition(String path, @NotNull GlobalPosition def) {
         GlobalPosition loc = getSerializable(path, GlobalPosition.SERIALIZER);
         return loc == null ? def : loc;
-    }
-
-    @Override
-    public void setNamespacedKey(String path, @NotNull Key value) {
-        setString(path, value.toString());
-    }
-
-    @Override
-    public @NotNull Key getNamespacedKey(String path) {
-        @Subst("minecraft:duck") String stringified = getString(path, "");
-        if (!stringified.isEmpty()) {
-            return Key.key(stringified);
-        }
-        ConsoleMessenger.bug("Could not read namespaced key: '" + stringified + "'", this.getClass());
-        assert(false);
-        return Key.key("", "");
     }
 
     @Override

@@ -8,10 +8,8 @@ import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagAdapter;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
-import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -241,20 +239,6 @@ public class YamlDataStorage implements DataStorage
     public @NotNull GlobalPosition getGlobalPosition(String path, @NotNull GlobalPosition def) {
         GlobalPosition pos = getGlobalPosition(path);
         return pos == null ? def : pos;
-    }
-
-    @Override
-    public void setNamespacedKey(String path, @NotNull Key value) {
-        config.set(path, value);
-    }
-
-    @Override
-    public @NotNull Key getNamespacedKey(String path) {
-        Object ns = config.get(path);
-        if (ns instanceof NamespacedKey key) {
-            return key;
-        }
-        return new NamespacedKey("", "");
     }
 
     @Override

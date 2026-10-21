@@ -104,9 +104,6 @@ public interface DataStorage
     @Nullable GlobalPosition getGlobalPosition(String path);
     @NotNull GlobalPosition getGlobalPosition(String path, @NotNull GlobalPosition def);
 
-    void setNamespacedKey(String path, @NotNull Key value);
-    @NotNull Key getNamespacedKey(String path);
-
     void setStorage(String path, DataStorage value);
     @Nullable DataStorage getStorage(String path);
 
@@ -115,11 +112,11 @@ public interface DataStorage
         return storage == null ? createNew() : storage;
     }
 
-    default void setKey(String path, Key key) {
+    default void setResourceKey(String path, Key key) {
         setString(path, key.asString());
     }
 
-    default @Nullable Key getKey(String path) {
+    default @Nullable Key getResourceKey(String path) {
         String s = getString(path, "");
         return s.isEmpty() ? null : Key.key(s);
     }

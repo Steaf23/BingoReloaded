@@ -16,7 +16,7 @@ import java.util.Set;
  * These worlds are saved in the plugin's data folder under the levelKey worlds
  * If the nether or end are disabled, they will be stored with the same UUID as the overworld.
  */
-public record WorldGroup(PlatformServer server, Key overworldKey, boolean hasNether, boolean hasTheEnd) implements Keyed
+public record WorldSet(PlatformServer server, Key overworldKey, boolean hasNether, boolean hasTheEnd) implements Keyed
 {
     public void teleportPlayer(PlayerHandle player) {
         player.teleportAsync(server.getWorld(overworldKey).spawnPoint());

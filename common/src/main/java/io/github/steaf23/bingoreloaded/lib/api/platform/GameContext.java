@@ -5,11 +5,12 @@ import io.github.steaf23.bingoreloaded.data.config.ConfigurationOption;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public record GameContext(PlatformServer server, BingoReloaded bingo) {
 
-	public @Nullable BingoSession getSession(String sessionName) {
+	public Optional<BingoSession> getSession(String sessionName) {
 		return bingo.getGameManager().getSession(sessionName);
 	}
 

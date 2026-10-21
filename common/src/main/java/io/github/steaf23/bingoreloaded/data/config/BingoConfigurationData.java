@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.data.teleportgrid.TeleportationGrid;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,8 +64,12 @@ public class BingoConfigurationData
         this.options = new HashMap<>();
 
         // General
-        setOptionValueForce(BingoOptions.CONFIGURATION, name -> BingoOptions.PluginConfiguration.valueOf(config.getString(name, "SINGULAR")));
-        setOptionValueForce(BingoOptions.DEFAULT_WORLD_NAME, name -> config.getString(name, "minecraft:overworld"));
+        setOptionValueForce(BingoOptions.SETUP, name -> {
+            GameSetup.LobbyMode mode = GameSetup.LobbyMode.valueOf(config.getString(name + ".lobbyMode", "GAME_WORLD").toUpperCase());
+            Key lobbyWorld = config.getResourceKey(name + ".lobbyWorld");
+            int maxWorlds = config.getInt(name + ".maxConcurrentWorlds", 1);
+            return new GameSetup(maxWorlds, mode, Optional.ofNullable(lobbyWorld));
+        });
         setOptionValueForce(BingoOptions.LANGUAGE, name -> config.getString(name, "en_us.yml"));
         setOptionValueForce(BingoOptions.SAVE_PLAYER_STATISTICS, name -> config.getBoolean(name, false));
  		setOptionValueForce(BingoOptions.PLAYER_GAMEMODE_AFTER_GAME, name -> BingoOptions.ConfigGamemode.valueOf(config.getString(name, "SURVIVAL")));
@@ -110,7 +115,7 @@ public class BingoConfigurationData
         // Gameplay
         setOptionValueForce(BingoOptions.STARTING_COUNTDOWN_TIME, name -> config.getInt(name, 10));
         setOptionValueForce(BingoOptions.TELEPORT_MAX_DISTANCE, name -> config.getInt(name, 1000000));
-        setOptionValueForce(BingoOptions.PLAYER_TELEPORT_STRATEGY, name -> BingoOptions.PlayerTeleportStrategy.valueOf(config.getString(name, "ALL")));
+        setOptionValueForce(BingoOptions.PLAYER_TELEPORT_STRATEGY, name -> BingoOptions.PlayerTeleportStrategy.valueOf(config.getString(name, "NONE")));
         setOptionValueForce(BingoOptions.TELEPORT_AFTER_DEATH, name -> config.getBoolean(name, true));
         setOptionValueForce(BingoOptions.TELEPORT_AFTER_DEATH_PERIOD, name -> config.getInt(name, 60));
         setOptionValueForce(BingoOptions.GO_UP_WAND_UP_DISTANCE, name -> config.getInt(name, 75));

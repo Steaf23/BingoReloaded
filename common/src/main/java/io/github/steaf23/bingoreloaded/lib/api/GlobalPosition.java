@@ -10,14 +10,14 @@ public class GlobalPosition extends Position {
 
 	public static final DataStorageSerializer<GlobalPosition> SERIALIZER = DataStorageSerializer.of(
 			(storage, value) -> {
-				storage.setKey("world", value.dimension());
+				storage.setResourceKey("world", value.dimension());
 				storage.setDouble("x", value.x());
 				storage.setDouble("y", value.y());
 				storage.setDouble("z", value.z());
 //        storage.setFloat("yaw", value.getYaw());
 //        storage.setFloat("pitch", value.getPitch());
 			}, storage -> {
-				Key id = storage.getKey("world");
+				Key id = storage.getResourceKey("world");
 				if (id == null) {
 					return null;
 				}

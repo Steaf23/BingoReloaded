@@ -6,7 +6,6 @@ import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.TaskFormatData;
 import io.github.steaf23.bingoreloaded.data.TaskTagData;
-import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -74,18 +73,15 @@ public class PaperClientManager implements BingoClientManager {
 			ConsoleMessenger.log("Player " + player.getName() + " connected using the companion mod");
 
 			PlayerHandle handle = new PlayerHandlePaper(bingo.getGameManager().getServer(), player);
-			BingoSession session = bingo.getGameManager().getSessionOfPlayer(handle);
-			if (session == null) {
-				return;
-			}
-
-			BingoParticipant participant = session.teamManager.getPlayerAsParticipant(handle);
-			if (participant == null) {
+			Optional<BingoParticipant> participant = bingo.getGameManager()
+					.getSessionOfPlayer(handle)
+					.map(session -> session.teamManager.getPlayerAsParticipant(handle));
+			if (participant.isEmpty()) {
 				return;
 			}
 
 			bingo.getGameManager().getServer().taskScheduler().runTask(20, t -> {
-				updateCard(handle, participant.getCard().orElse(null));
+				updateCard(handle, participant.get().getCard().orElse(null));
 			});
 		});
 

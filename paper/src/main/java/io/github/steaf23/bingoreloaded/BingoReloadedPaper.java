@@ -20,6 +20,7 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.DataUpdaterV3_6_0;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
+import io.github.steaf23.bingoreloaded.data.config.GameSetup;
 import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
@@ -200,7 +201,15 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		bStatsMetrics.addCustomChart(new Metrics.SimplePie("selected_language",
 				() -> bingo.config().getOptionValue(BingoOptions.LANGUAGE).replace(".yml", "").replace("languages/", "")));
 		bStatsMetrics.addCustomChart(new Metrics.SimplePie("plugin_configuration",
-				() -> bingo.config().getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.SINGULAR ? "Singular" : "Multiple"));
+				() -> {
+					GameSetup setup = bingo.config().getOptionValue(BingoOptions.SETUP);
+					if (setup.canPlayMultipleGamesAtOnce()) {
+						return "Multiple";
+					}
+					else {
+						return "Singular";
+					}
+				}));
 	}
 
 	@Override
@@ -298,12 +307,13 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	}
 
 	@Override
-	public void registerCommands(BingoConfigurationData config) {
+	public void registerCommands() {
 		getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+			BingoConfigurationData config = bingo.config();
 			MappedCommand.Settings<CommandSourceStack> settings = new MappedCommand.Settings<>(this::mapCommandSource, ArgumentTypes.key());
-			event.registrar().register(new BingoCommand<>(bingo.config(), settings).builder().build());
-			event.registrar().register(new AutoBingoCommand<>(settings).builder().build());
-			event.registrar().register(new BingoConfigCommand<>(bingo.config(), settings).builder().build());
+			event.registrar().register(new BingoCommand<>(config, settings).builder().build());
+			event.registrar().register(new AutoBingoCommand<>(config.getOptionValue(BingoOptions.SETUP), settings).builder().build());
+			event.registrar().register(new BingoConfigCommand<>(config, settings).builder().build());
 
 			if (config.getOptionValue(BingoOptions.ENABLE_TEAM_CHAT)) {
 				TeamChatCommand command = new TeamChatCommand(player -> bingo.getGameManager().getSessionFromWorld(player.world()), settings);

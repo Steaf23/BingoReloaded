@@ -6,12 +6,6 @@ import java.util.List;
 
 public class BingoOptions {
 
-	public enum PluginConfiguration 
-	{
-		SINGULAR,
-		MULTIPLE,
-	}
-
 	public enum PlayerTeleportStrategy 
 	{
 		ALONE,
@@ -37,10 +31,7 @@ public class BingoOptions {
 	}
 
 	// General
-	public static final ConfigurationOption<PluginConfiguration> CONFIGURATION = new EnumOption<>("configuration", PluginConfiguration.class, PluginConfiguration.SINGULAR)
-			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
-	public static final ConfigurationOption<String> DEFAULT_WORLD_NAME = new StringOption("defaultWorldName")
-			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
+	public static final ConfigurationOption<GameSetup> SETUP = new NonSerializableOption<>("setup");
 	public static final ConfigurationOption<String> LANGUAGE = new StringOption("language")
 			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
 	public static final ConfigurationOption<Boolean> SAVE_PLAYER_STATISTICS = new BooleanOption("savePlayerStatistics");

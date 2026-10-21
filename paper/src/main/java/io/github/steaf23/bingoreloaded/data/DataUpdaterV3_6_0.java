@@ -39,11 +39,11 @@ public class DataUpdaterV3_6_0 extends DataUpdaterV3_5_0 {
 			List<DataStorage> tasks = tagData.getList(list + ".tasks");
 			for (DataStorage storage : tasks) {
 				if (storage.contains("statistic")) {
-					Key key = storage.getKey("statistic.stat_type");
+					Key key = storage.getResourceKey("statistic.stat_type");
 					if (key == null) {
 						continue;
 					}
-					storage.setKey("statistic.stat_type", BukkitStatistics.getVanillaStatistic(Statistic.valueOf(key.value().toUpperCase())).key());
+					storage.setResourceKey("statistic.stat_type", BukkitStatistics.getVanillaStatistic(Statistic.valueOf(key.value().toUpperCase())).key());
 				}
 			}
 			tagData.setList(list + ".tasks", tasks);

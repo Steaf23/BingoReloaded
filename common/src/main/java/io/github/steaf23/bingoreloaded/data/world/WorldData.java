@@ -13,6 +13,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 public class WorldData
 {
     public record Options(@Nullable Key noiseGenerationSettings, boolean createNether, boolean createEnd) {}
@@ -45,8 +47,8 @@ public class WorldData
         return true;
     }
 
-    public WorldGroup createWorldGroupInSession(String sessionName) {
-        return createWorldGroup(BingoReloaded.resourceKey(sessionName));
+    public WorldSet createWorldSetWithName(String worldName) {
+        return createWorldSet(BingoReloaded.resourceKey(worldName));
     }
 
     /**
@@ -54,7 +56,7 @@ public class WorldData
      * If worlds by the same levelKey exist, this will just construct a world group with the pre-existing worlds
      * @return created WorldGroup
      */
-    public WorldGroup createWorldGroup(Key overworldKey) {
+    public WorldSet createWorldSet(Key overworldKey) {
         WorldHandle overworld = runtime.createBingoOverworld(overworldKey, options.noiseGenerationSettings);
         if (overworld == null) {
             ConsoleMessenger.bug("Could not create world using bingo small biome generation.", this);
@@ -64,58 +66,58 @@ public class WorldData
         boolean hasNether = false;
         boolean hasTheEnd = false;
         if (options.createNether()) {
-            WorldHandle nether = createWorld(WorldGroup.netherKey(overworldKey), DimensionType.NETHER);
+            WorldHandle nether = createWorld(WorldSet.netherKey(overworldKey), DimensionType.NETHER);
             hasNether = nether != null;
         }
 
         if (options.createEnd()) {
-            WorldHandle end = createWorld(WorldGroup.theEndKey(overworldKey), DimensionType.THE_END);
+            WorldHandle end = createWorld(WorldSet.theEndKey(overworldKey), DimensionType.THE_END);
             hasTheEnd = end != null;
         }
 
-        return new WorldGroup(server, overworldKey, hasNether, hasTheEnd);
+        return new WorldSet(server, overworldKey, hasNether, hasTheEnd);
     }
 
-    public @Nullable WorldGroup getWorldGroupInSession(String sessionName) {
-        return getWorldGroup(BingoReloaded.resourceKey(sessionName));
+    public Optional<WorldSet> getWorldSet(String worldName) {
+        return getWorldSet(BingoReloaded.resourceKey(worldName));
     }
 
-    public @Nullable WorldGroup getWorldGroup(Key overworldKey) {
+    public Optional<WorldSet> getWorldSet(Key overworldKey) {
         WorldHandle overworld = server.getWorld(overworldKey);
-        WorldHandle nether = server.getWorld(WorldGroup.netherKey(overworldKey));
-        WorldHandle theEnd = server.getWorld(WorldGroup.theEndKey(overworldKey));
+        WorldHandle nether = server.getWorld(WorldSet.netherKey(overworldKey));
+        WorldHandle theEnd = server.getWorld(WorldSet.theEndKey(overworldKey));
 
         if (overworld == null) {
             ConsoleMessenger.error("Could not fetch world group; " + overworldKey + " does not exist. Make sure the world exists and reload the plugin.");
-            return null;
+            return Optional.empty();
         }
 
         if (options.createNether()) {
             if (nether == null) {
                 ConsoleMessenger.error("Could not fetch world group; " + overworldKey + "_nether does not exist. Make sure the world exists and reload the plugin.");
-                return null;
+                return Optional.empty();
             }
         }
 
         if (options.createEnd()) {
             if (theEnd == null) {
                 ConsoleMessenger.error("Could not fetch world group; " + overworldKey + "_the_end does not exist. Make sure the world exists and reload the plugin.");
-                return null;
+                return Optional.empty();
             }
         }
 
-        return new WorldGroup(server, overworldKey, options.createNether(), options.createEnd());
+        return Optional.of(new WorldSet(server, overworldKey, options.createNether(), options.createEnd()));
     }
 
     /**
      * !Also removes the worlds from the plugin folder permanently!
      * @return true if the worlds in the world group could be destroyed correctly
      */
-    public boolean destroyWorldGroup(@NotNull WorldGroup worldGroup) {
+    public boolean destroyWorldGroup(@NotNull WorldSet worldSet) {
         //TODO: add logic for when end or nether were never created in the first place.
-        boolean success = destroyWorld(worldGroup.key());
-        success = success && destroyWorld(WorldGroup.netherKey(worldGroup.key()));
-        success = success && destroyWorld(WorldGroup.theEndKey(worldGroup.key()));
+        boolean success = destroyWorld(worldSet.key());
+        success = success && destroyWorld(WorldSet.netherKey(worldSet.key()));
+        success = success && destroyWorld(WorldSet.theEndKey(worldSet.key()));
         return success;
     }
 

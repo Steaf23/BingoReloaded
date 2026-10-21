@@ -20,14 +20,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 public class TeamChatCommand extends MappedCommand<CommandSourceStack> implements Listener {
 
 	private final List<BingoPlayer> enabledPlayers;
-	private final Function<PlayerHandle, @Nullable BingoSession> sessionResolver;
+	private final Function<PlayerHandle, Optional<BingoSession>> sessionResolver;
 
-	public TeamChatCommand(Function<PlayerHandle, @Nullable BingoSession> sessionResolver, Settings<CommandSourceStack> mapper) {
+	public TeamChatCommand(Function<PlayerHandle, Optional<BingoSession>> sessionResolver, Settings<CommandSourceStack> mapper) {
 		super("btc", List.of("bingo.player"), mapper);
 		this.enabledPlayers = new ArrayList<>();
 		this.sessionResolver = sessionResolver;
@@ -65,7 +66,7 @@ public class TeamChatCommand extends MappedCommand<CommandSourceStack> implement
 	}
 
 	private @Nullable BingoSession getSession(PlayerHandle player) {
-		return sessionResolver.apply(player);
+		return sessionResolver.apply(player).orElse(null);
 	}
 
 	@EventHandler

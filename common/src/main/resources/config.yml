@@ -4,19 +4,16 @@ version: 3.6.0
 # ==========================================================================
 
 # Choose between:
-#   - SINGULAR: The main server world is repurposed for the use of bingo. This mode assumes that bingo is the only gamemode or gameplay option on the server
+#   - SINGLE_WORLD: The main server world is repurposed for the use of bingo. This mode assumes that bingo is the only gamemode or gameplay option on the server
 #       This makes is good to just play a few rounds with some friends without worrying about the world configurations.
 #       This can also be used for bigger server networks where each server represents an instance of the game.
-#   - MULTIPLE: The plugin creates worlds specifically for the purpose of playing bingo.
+#   - SEPARATE_WORLDS: The plugin creates worlds specifically for the purpose of playing bingo.
 #       The main world can be converted to a lobby world but this is not required.
-configuration: SINGULAR
-
-# This option means different things for each configuration:
-#   - SINGULAR: This world is the one where bingo is played. The plugin will not create this world, so make sure to create it before running this plugin.
-#     to allow the plugin to use the Nether and End dimensions, the names `<defaultWorldName>_nether` and `<defaultWorldName>_the_end` must also be valid worlds.
-#   - MULTIPLE: This world is used more like a lobby world, however it is not required. The actual game worlds can be created using autobingo commands .
-#     In this case, players can be teleported to any active game world using the /autobingo addplayer command
-defaultWorldName: "minecraft:overworld"
+setup:
+  useExistingWorld: true
+  maxWorlds: 1
+  maxGamesPerWorld: 1
+  lobbyWorld: "minecraft:overworld"
 
 # The yml file that contains the language data that will be used for this plugin
 #   Choose from: en_us.yml, nl.yml, fr_fr.yml, pt_br.yml, du.yml, zh_cn.yml, ja_jp.yml, ru.yml
@@ -43,12 +40,6 @@ selectTeamsUsingCommandsOnly: false
 
 # If true disables the scoreboard sidebar completely, useful for server (networks) with a pre-existing sidebar scoreboard.
 disableScoreboardSidebar: false
-
-# UNIMPLEMENTED
-# If true sends all players the resource pack made for bingo reloaded. This pack has visual changes only.
-# The resource pack is sent to any player joining a world where bingo can be played and gets removed when they leave.
-# If set to false will use the fallback menus and items without losing functionality.
-useIncludedResourcepack: true
 
 # Set to false if you want to disable the card rendering in the player hand on a map, may save a bit of server performance.
 # It's recommended to use this setting alongside showAdvancementItems for the best experience while playing.
@@ -176,7 +167,7 @@ teleportMaxDistance: 1000000
 #   - ALL: everyone together (ALL),
 #   - ALONE: everyone apart (ALONE),
 #   - TEAM: everyone with their teammates (TEAM),
-#   - NONE: no one gets teleported at all (NONE),
+#   - NONE: no one gets teleported at all (NONE) (or to the target world's spawn if there are multiple worlds),
 #   - GRID: use configured grid settings (only works on configuration: SINGULAR),
 #   - using any other value will make it so no one teleports at all at the start of the game.
 playerTeleportStrategy: ALL
@@ -280,7 +271,7 @@ savePlayerInformation: true
 loadPlayerInformationStrategy: AFTER_LEAVING_WORLD
 
 # ==========================================================================
-#    Configuration: SINGULAR Specific Configuration Options
+#    Single World Specific Configuration Options
 # ==========================================================================
 
 # When true, the world is divided into a rectangular grid. This teleportation method can be enabled by setting it in the playerTeleportStrategy.
@@ -307,7 +298,7 @@ teleportGrid:
   skipOceanBiomes: true
 
 # ==========================================================================
-#    Configuration: MULTIPLE Specific Configuration Options
+#    Multiple Worlds Specific Configuration Options
 # ==========================================================================
 
 # Specify a list of worlds to create on server startup using /autobingo <world_name> create automatically.

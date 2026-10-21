@@ -216,7 +216,7 @@ public class PregameLobby implements GamePhase
                 return;
             }
 
-            session.getPlayersInWorld().stream()
+            session.allPlayers().stream()
                     .filter(session::hasPlayer)
                     .forEach(this::initializePlayer);
 

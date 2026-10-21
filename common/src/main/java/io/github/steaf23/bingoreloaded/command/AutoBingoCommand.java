@@ -18,6 +18,7 @@ import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
+import io.github.steaf23.bingoreloaded.data.config.GameSetup;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
@@ -41,6 +42,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -49,12 +51,14 @@ import java.util.function.BiFunction;
 
 public class AutoBingoCommand<Source> extends MappedCommand<Source> {
 
-	public AutoBingoCommand(Settings<Source> mappingSettings) {
+	public AutoBingoCommand(GameSetup setup, Settings<Source> mappingSettings) {
 		super("autobingo", List.of("bingo.admin"), mappingSettings);
 
-		addGameManagerSubAction("create", this::create);
+		if (setup.canPlayMultipleGamesAtOnce()) {
+			addGameManagerSubAction("create", this::create);
 
-		addGameManagerSubAction("destroy", this::destroy);
+			addGameManagerSubAction("destroy", this::destroy);
+		}
 
 		addGameManagerSubAction("start", this::start);
 
@@ -264,11 +268,6 @@ public class AutoBingoCommand<Source> extends MappedCommand<Source> {
 		);
 	}
 
-	private BingoSettingsBuilder getSettingsBuilder(GameContext context, String sessionName) {
-		BingoSession session = context.gameManager().getSession(sessionName);
-		return session == null ? null : session.settingsBuilder;
-	}
-
 	public AutoResult create(GameManager manager, String worldName) {
 		if (manager.createSession(worldName)) {
 			return sendSuccess("Connected Bingo Reloaded to this world!");
@@ -471,8 +470,8 @@ public class AutoBingoCommand<Source> extends MappedCommand<Source> {
 			return sendFailed("Player " + playerName + " could not be found.");
 		}
 
-		Optional<BingoSession> session = Optional.ofNullable(context.getSession(worldName));
-		if (session.isEmpty() || !session.get().ownsWorld(player.world())) {
+		Optional<BingoSession> session = context.getSession(worldName);
+		if (session.isEmpty() || !session.get().usesWorld(player.world())) {
 			return sendFailed("Player cannot be teleported. " + playerName + " is not in " + worldName);
 		}
 
@@ -489,21 +488,22 @@ public class AutoBingoCommand<Source> extends MappedCommand<Source> {
 	}
 
 	private AutoResult removeAllPlayersFromSession(GameContext context, String worldName, Key targetWorld) {
-		BingoSession session = context.getSession(worldName);
-		if (session == null) {
+		Optional<BingoSession> optSession = context.getSession(worldName);
+		if (optSession.isEmpty()) {
 			return sendFailed("Could not remove players from this world, invalid session");
 		}
+		BingoSession session = optSession.get();
 
 		WorldHandle world = context.server().getWorld(targetWorld);
 		if (world == null) {
 			return sendFailed("Could not teleport players to invalid world " + targetWorld + ".");
 		}
 
-		Set<PlayerHandle> allPlayers = session.getPlayersInWorld();
+		Set<PlayerHandle> allPlayers = session.allPlayers();
 		int playerCount = allPlayers.size();
 		int playersLeft = playerCount;
-		for (PlayerHandle player : session.getPlayersInWorld()) {
-			if (!session.ownsWorld(player.world())) {
+		for (PlayerHandle player : new HashSet<>(allPlayers)) {
+			if (!session.usesWorld(player.world())) {
 				ConsoleMessenger.log("Player '" + player.playerName() + "' cannot be kicked from the session " + targetWorld);
 				continue;
 			}

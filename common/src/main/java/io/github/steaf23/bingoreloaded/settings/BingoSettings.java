@@ -78,7 +78,7 @@ public record BingoSettings(String cardName,
                 storage.setInt("team_size", value.maxTeamSize());
                 storage.setInt("team_count", value.maxTeamCount());
                 storage.setInt("duration", value.countdownDuration());
-                storage.setNamespacedKey("countdown_type", value.countdownType().key());
+                storage.setResourceKey("countdown_type", value.countdownType().key());
                 storage.setInt("hotswap_goal", value.hotswapGoal());
                 storage.setBoolean("expire_hotswap_tasks", value.expireHotswapTasks());
                 storage.setInt("complete_goal", value.completeGoal());
@@ -98,7 +98,7 @@ public record BingoSettings(String cardName,
                         enumSetFromList(EffectOptionFlags.class, storage.getList("effects", TagDataType.STRING)),
                         storage.getInt("team_size", 1),
                         storage.getInt("team_count", 64),
-                        BingoSettings.CountdownType.fromNamespace(storage.getNamespacedKey("countdown_type")),
+                        BingoSettings.CountdownType.fromNamespace(storage.getResourceKey("countdown_type")),
                         storage.getInt("duration", 0),
                         storage.getInt("hotswap_goal", 10),
                         storage.getBoolean("expire_hotswap_tasks", true),

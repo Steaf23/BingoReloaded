@@ -196,7 +196,7 @@ public class BingoGame implements GamePhase
                 HoverEvent.showText(hoverMessage),
                 Component.empty()), session);
 
-        session.getPlayersInWorld().stream().filter(p -> getTeamManager().getPlayerAsParticipant(p) == null)
+        session.world().getPlayers().stream().filter(p -> getTeamManager().getPlayerAsParticipant(p) == null)
                 .forEach(spectator -> spectator.setGamemode(PlayerGamemode.SPECTATOR));
 
         getTeamManager().getParticipants().forEach(p ->
@@ -309,7 +309,7 @@ public class BingoGame implements GamePhase
         List<String> commandAllPlayers = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_END_EVERY_PLAYER);
         for (String cmd : commandAllPlayers) {
             taskScheduler().runTask(task -> {
-                for (var player : session.getPlayersInWorld()) {
+                for (var player : session.allPlayers()) {
                     String commandToSend = cmd.replace("{player}", player.playerName());
                     server.commandDispatcher().sendCommandFromConsole(commandToSend);
                 }
